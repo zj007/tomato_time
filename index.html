@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fan qie</title>
+</head>
+<body>
+    <audio id='audio_xiuxi' src="D:/BaiduMusic/Songs/甩葱歌 - 铃声.mp3"></audio>
+    <h1 id='time'></h1>
+    <script>
+       function jishi() {
+           var sleep_time = 1000;
+           var work = 30;
+           var xiuxi = 5;
+           var i = work;
+           var status = 'work';
+            
+           document.getElementById('time').innerText = i;
+           function show() {
+               i -= 1;
+               if (i == 0) {
+                   //alert('done');
+                   if (status == 'work') {
+                       i = xiuxi;
+                       status = 'xiuxi';
+                       document.getElementById('audio_xiuxi').play();
+                   }
+                   else {
+                       i = work;
+                       status = 'work';
+                   }
+               }
+               document.getElementById('time').innerText = i;
+               setTimeout(show, sleep_time);
+           }
+           
+           //document.write(i)
+           setTimeout(show, sleep_time);
+       }
+       jishi();
+    </script>
+</body>
+</html>
