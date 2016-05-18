@@ -10,19 +10,94 @@
         .color_green {
             color : green;
         }
+        .circleProgress_wrapper {
+            width: 200px;
+            height: 200px;
+            margin: 50px auto;
+            position: relative;
+            border: 1px solid transparent;
+        }
+        .wrapper {
+            width: 100px;
+            height: 200px;
+            position: absolute;
+            top: 0;
+            overflow: hidden;
+        }
+        .right {
+            right : 0;
+        }
+        .left {
+            left : 0;
+        }
+        .circleProgress {
+            width: 160px;
+            height: 160px;
+            border: 20px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            -webkit-transform: rotate(45deg);
+        }
+        .innerCircle {
+            width: 150px;
+            height: 150px;
+            border: 5px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+            top : 20px;
+            left : 20px;
+            line-height: 150px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 400%;
+            
+        }
+        .rightcircle {
+            border-top: 20px solid green;
+            border-right: 20px solid green;
+            right:0;
+            -webkit-transform: rotate(225deg);
+        }
+        .leftcircle {
+            border-bottom: 20px solid green;
+            border-left:20px solid green;
+            left:0;
+            -webkit-transform: rotate(225deg);
+        }
+        .text-center {
+            line-height: 200px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .text-big {
+            font-size: 400%;
+        }
     </style>
 </head>
 <body>
     <audio id='audio_rest' src="./music/rest"></audio>
     <audio id='audio_work' src="./music/work"></audio>
-    <h1 id='time'></h1>
+    <div class="circleProgress_wrapper">
+       
+        <div class="wrapper right">
+            <div class="circleProgress rightcircle"></div>
+        </div>
+        <div class="wrapper left">
+            <div class="circleProgress leftcircle"></div>
+        </div>
+         <div class="text-center text-big" id="time">
+        </div>
+    </div>
+   
     <button id='btn_next'>next</button>
+    
     <script>
        var t = null;
        var interval_index = 0;
        function tomato_time() {
            //alert('hi');
-           var sleep_time = 1000; //1 minute
+           var sleep_time = 1000 * 60; //1 minute
            var work_interval = 30;
            var rest_interval = 5;
            var interval_list = [work_interval, rest_interval];
@@ -37,18 +112,18 @@
            
            remind_list = [audio_work, audio_rest];
            
-           time_div.innerText = i;
-           time_div.setAttribute('class', class_list[interval_index]);
+           time_div.innerHTML = i;
+           //time_div.setAttribute('class', class_list[interval_index]);
            function show() {
                i -= 1;
-               if (i == 0) {
+               if (i <= 0) {
                    next_index = (interval_index + 1) % 2;
                    i = interval_list[next_index];
-                   time_div.setAttribute('class', class_list[next_index]);
+                   //time_div.setAttribute('class', class_list[next_index]);
                    remind_list[next_index].play();
                    interval_index = next_index;
                }
-               time_div.innerText = i;
+               time_div.innerHTML = i;
                t = setTimeout(show, sleep_time);
            }
            
@@ -66,6 +141,33 @@
        }
        btn_next.onclick = next;
        
+       var right_circle = document.getElementsByClassName('rightcircle')[0];
+       var left_circle = document.getElementsByClassName('leftcircle')[0];
+       right_circle.style.WebkitTransform = "rotate(45deg)";
+       left_circle.style.WebkitTransform = "rotate(45deg)";
+       
+       var total = 30 * 1000 * 60;
+       var x = total;
+       var inter = 1000;
+       function test_process() {
+           x -= inter;
+           if (x <= 0) {
+               x = total;
+           }
+           ratio = (total - x) / total;
+           if (ratio <= 0.5) {
+               left_circle.style.WebkitTransform = "rotate(45deg)";
+               jiaodu = 45 + 360 * ratio;
+               right_circle.style.WebkitTransform = "rotate("+jiaodu+"deg)";
+           }
+           else {
+               right_circle.style.WebkitTransform = "rotate(225deg)";
+               jiaodu = 45 + 360 * (ratio - 0.5);
+               left_circle.style.WebkitTransform = "rotate("+Math.floor(jiaodu)+"deg)";
+           }
+           setTimeout(test_process, inter);
+       }
+       setTimeout(test_process, inter)
     </script>
 </body>
 </html>
