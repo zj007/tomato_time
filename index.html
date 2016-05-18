@@ -15,42 +15,57 @@
 <body>
     <audio id='audio_rest' src="./music/rest"></audio>
     <audio id='audio_work' src="./music/work"></audio>
-    <h1 id='time' class='color_blue'></h1>
+    <h1 id='time'></h1>
+    <button id='btn_next'>next</button>
     <script>
+       var t = null;
+       var interval_index = 0;
        function tomato_time() {
-           var sleep_time = 1000 * 60; //1 minute
-           var work = 30;
-           var xiuxi = 5;
-           var i = work;
-           var status = 'work';
+           //alert('hi');
+           var sleep_time = 1000; //1 minute
+           var work_interval = 30;
+           var rest_interval = 5;
+           var interval_list = [work_interval, rest_interval];
+           var class_list = ['color_blue', 'color_green'];
+           var remind_list = []
+           
+           var i = interval_list[interval_index];
             
-           var time_table = document.getElementById('time');
-           time_table.innerText = i;
+           var time_div = document.getElementById('time');
+           var audio_work = document.getElementById('audio_work');
+           var audio_rest = document.getElementById('audio_rest');
+           
+           remind_list = [audio_work, audio_rest];
+           
+           time_div.innerText = i;
+           time_div.setAttribute('class', class_list[interval_index]);
            function show() {
                i -= 1;
                if (i == 0) {
-                   //alert('done');
-                   if (status == 'work') {
-                       i = xiuxi;
-                       status = 'rest';
-                       document.getElementById('audio_rest').play();
-                       time_table.setAttribute('class', 'color_green');
-                   }
-                   else {
-                       i = work;
-                       status = 'work';
-                       document.getElementById('audio_work').play();
-                       time_table.setAttribute('class', 'color_blue');
-                   }
+                   next_index = (interval_index + 1) % 2;
+                   i = interval_list[next_index];
+                   time_div.setAttribute('class', class_list[next_index]);
+                   remind_list[next_index].play();
+                   interval_index = next_index;
                }
-               time_table.innerText = i;
-               setTimeout(show, sleep_time);
+               time_div.innerText = i;
+               t = setTimeout(show, sleep_time);
            }
            
            //document.write(i)
-           setTimeout(show, sleep_time);
+           t = setTimeout(show, sleep_time);
        }
        tomato_time();
+       
+       var btn_next = document.getElementById('btn_next');
+       function next() {
+           clearTimeout(t);
+           interval_index = (interval_index + 1) % 2;
+           tomato_time();
+           //alert('test');
+       }
+       btn_next.onclick = next;
+       
     </script>
 </body>
 </html>
