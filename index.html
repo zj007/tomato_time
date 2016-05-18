@@ -2,42 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>fan qie</title>
+    <title>tomato time</title>
+    <style>
+        .color_blue {
+            color : blue;
+        }
+        .color_green {
+            color : green;
+        }
+    </style>
 </head>
 <body>
-    <audio id='audio_xiuxi' src=""></audio>
-    <h1 id='time'></h1>
+    <audio id='audio_rest' src="./music/rest"></audio>
+    <audio id='audio_work' src="./music/work"></audio>
+    <h1 id='time' class='color_blue'></h1>
     <script>
-       function jishi() {
-           var sleep_time = 1000;
+       function tomato_time() {
+           var sleep_time = 1000; //1 minute
            var work = 30;
            var xiuxi = 5;
            var i = work;
            var status = 'work';
             
-           document.getElementById('time').innerText = i;
+           var time_table = document.getElementById('time');
+           time_table.innerText = i;
            function show() {
                i -= 1;
                if (i == 0) {
                    //alert('done');
                    if (status == 'work') {
                        i = xiuxi;
-                       status = 'xiuxi';
-                       document.getElementById('audio_xiuxi').play();
+                       status = 'rest';
+                       document.getElementById('audio_rest').play();
+                       time_table.setAttribute('class', 'color_green');
                    }
                    else {
                        i = work;
                        status = 'work';
+                       document.getElementById('audio_work').play();
+                       time_table.setAttribute('class', 'color_blue');
                    }
                }
-               document.getElementById('time').innerText = i;
+               time_table.innerText = i;
                setTimeout(show, sleep_time);
            }
            
            //document.write(i)
            setTimeout(show, sleep_time);
        }
-       jishi();
+       tomato_time();
     </script>
 </body>
 </html>
