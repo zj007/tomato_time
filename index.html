@@ -13,7 +13,7 @@
         .circleProgress_wrapper {
             width: 200px;
             height: 200px;
-            margin: 50px auto;
+            margin: 40px auto;
             position: relative;
             border: 1px solid transparent;
         }
@@ -54,14 +54,18 @@
             
         }
         .rightcircle {
-            border-top: 20px solid green;
-            border-right: 20px solid green;
+            border-top: 20px solid;
+            border-right: 20px solid;
+            border-top-color: green;
+            border-right-color: green;
             right:0;
             -webkit-transform: rotate(225deg);
         }
         .leftcircle {
-            border-bottom: 20px solid green;
-            border-left:20px solid green;
+            border-bottom: 20px solid;
+            border-left:20px solid;
+            border-bottom-color  : green;
+            border-left-color : green;
             left:0;
             -webkit-transform: rotate(225deg);
         }
@@ -72,6 +76,12 @@
         }
         .text-big {
             font-size: 400%;
+        }
+        .div-center {
+           width: 50px;
+           margin-top: 20px;
+           margin-left: auto;
+           margin-right: auto;
         }
     </style>
 </head>
@@ -90,21 +100,28 @@
         </div>
     </div>
    
+   <div class="div-center">
     <button id='btn_next'>next</button>
-    
+   </div>
+       
     <script>
        var t = null;
+       var circle_t = null;
        var interval_index = 0;
        function tomato_time() {
            //alert('hi');
            var sleep_time = 1000 * 60; //1 minute
+           var circle_sleep_time = 1000; // 1 second
            var work_interval = 30;
            var rest_interval = 5;
            var interval_list = [work_interval, rest_interval];
+           var circle_total_time = [work_interval * 60 * 1000.0, rest_interval * 60 * 1000.0];
+           var circle_color = ['#1e90ff', '#00bb55'];
            var class_list = ['color_blue', 'color_green'];
            var remind_list = []
            
            var i = interval_list[interval_index];
+           var x = circle_total_time[interval_index];
             
            var time_div = document.getElementById('time');
            var audio_work = document.getElementById('audio_work');
@@ -114,6 +131,17 @@
            
            time_div.innerHTML = i;
            //time_div.setAttribute('class', class_list[interval_index]);
+           
+           var right_circle = document.getElementsByClassName('rightcircle')[0];
+           var left_circle = document.getElementsByClassName('leftcircle')[0];
+           right_circle.style.WebkitTransform = "rotate(45deg)";
+           left_circle.style.WebkitTransform = "rotate(45deg)";
+           cur_color = circle_color[interval_index];
+           right_circle.style.borderTopColor = cur_color;
+           right_circle.style.borderRightColor = cur_color;
+           left_circle.style.borderLeftColor = cur_color;
+           left_circle.style.borderBottomColor = cur_color;
+           
            function show() {
                i -= 1;
                if (i <= 0) {
@@ -122,31 +150,67 @@
                    //time_div.setAttribute('class', class_list[next_index]);
                    remind_list[next_index].play();
                    interval_index = next_index;
+                   
+                   clearTimeout(circle_t);
+                   x = circle_total_time[interval_index];
+                   right_circle.style.WebkitTransform = "rotate(45deg)";
+                   left_circle.style.WebkitTransform = "rotate(45deg)";
+                   cur_color = circle_color[interval_index];
+                   right_circle.style.borderTopColor = cur_color;
+                   right_circle.style.borderRightColor = cur_color;
+                   left_circle.style.borderLeftColor = cur_color;
+                   left_circle.style.borderBottomColor = cur_color;
+                   circle_t = setTimeout(circle_process, circle_sleep_time);
                }
                time_div.innerHTML = i;
                t = setTimeout(show, sleep_time);
            }
            
+            function circle_process() {
+                x -= circle_sleep_time;
+                if (x <= 0) {
+                    return;
+                }
+                var total = circle_total_time[interval_index];
+                ratio = (total - x) / total;
+                if (ratio <= 0.5) {
+                    left_circle.style.WebkitTransform = "rotate(45deg)";
+                    jiaodu = 45 + 360 * ratio;
+                    right_circle.style.WebkitTransform = "rotate("+jiaodu+"deg)";
+                }
+                else {
+                    right_circle.style.WebkitTransform = "rotate(225deg)";
+                    jiaodu = 45 + 360 * (ratio - 0.5);
+                    left_circle.style.WebkitTransform = "rotate("+jiaodu+"deg)";
+                }
+                circle_t = setTimeout(circle_process, circle_sleep_time);
+            }
+            circle_t = setTimeout(circle_process, circle_sleep_time)
+           
+           
            //document.write(i)
            t = setTimeout(show, sleep_time);
+           
        }
        tomato_time();
        
        var btn_next = document.getElementById('btn_next');
        function next() {
            clearTimeout(t);
+           clearTimeout(circle_t);
            interval_index = (interval_index + 1) % 2;
            tomato_time();
            //alert('test');
        }
        btn_next.onclick = next;
        
+       /*
        var right_circle = document.getElementsByClassName('rightcircle')[0];
        var left_circle = document.getElementsByClassName('leftcircle')[0];
        right_circle.style.WebkitTransform = "rotate(45deg)";
        left_circle.style.WebkitTransform = "rotate(45deg)";
        
-       var total = 30 * 1000 * 60;
+       var total = 5 * 1000 * 60;
        var x = total;
        var inter = 1000;
        function test_process() {
@@ -168,6 +232,7 @@
            setTimeout(test_process, inter);
        }
        setTimeout(test_process, inter)
+       */
     </script>
 </body>
 </html>
