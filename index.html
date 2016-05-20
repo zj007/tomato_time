@@ -110,14 +110,20 @@
        var interval_index = 0;
        function tomato_time() {
            //alert('hi');
-           var sleep_time = 1000 * 60; //1 minute
+           var sleep_time = 60 * 1000; //1 minute
            var circle_sleep_time = 1000; // 1 second
-           var work_interval = 30;
+           var minute_unit = 60 * 1000;
+           
+           //interval
+           var work_interval = 25;
            var rest_interval = 5;
+           var long_rest_interval = 30;
+           var circle_long_total_time = long_rest_interval * minute_unit;
+           
+           var continue_tomato_combine = 0;
            var interval_list = [work_interval, rest_interval];
-           var circle_total_time = [work_interval * 60 * 1000.0, rest_interval * 60 * 1000.0];
+           var circle_total_time = [work_interval * minute_unit, rest_interval  * minute_unit];
            var circle_color = ['#1e90ff', '#00bb55'];
-           var class_list = ['color_blue', 'color_green'];
            var remind_list = []
            
            var i = interval_list[interval_index];
@@ -130,7 +136,6 @@
            remind_list = [audio_work, audio_rest];
            
            time_div.innerHTML = i;
-           //time_div.setAttribute('class', class_list[interval_index]);
            
            var right_circle = document.getElementsByClassName('rightcircle')[0];
            var left_circle = document.getElementsByClassName('leftcircle')[0];
@@ -142,20 +147,47 @@
            left_circle.style.borderLeftColor = cur_color;
            left_circle.style.borderBottomColor = cur_color;
            
+           var is_long_rest = false;
+           
            function show() {
                i -= 1;
                if (i <= 0) {
-                   next_index = (interval_index + 1) % 2;
-                   i = interval_list[next_index];
-                   //time_div.setAttribute('class', class_list[next_index]);
-                   remind_list[next_index].play();
-                   interval_index = next_index;
-                   
                    clearTimeout(circle_t);
-                   x = circle_total_time[interval_index];
+                   
+                   
+                   //complete half tomato time
+                   if (!is_long_rest) {
+                       continue_tomato_combine += 0.5;
+                   }
+                   
+                   //if long rest
+                   //is_long_rest = false;
+                   if (continue_tomato_combine >= 4) {
+                       continue_tomato_combine = 0;
+                       is_long_rest = true;
+                   }
+                   else {
+                       is_long_rest = false;
+                   }
+                   
+                   if (is_long_rest) {
+                       i = long_rest_interval;
+                       x = circle_long_total_time;
+                       cur_color = circle_color[1];
+                       remind_list[1].play();
+                   }
+                   else{
+                       interval_index = (interval_index + 1) % 2;
+                       i = interval_list[interval_index];
+                       //music
+                       remind_list[interval_index].play();   
+                       x = circle_total_time[interval_index];
+                       cur_color = circle_color[interval_index];
+                   }
+                   
                    right_circle.style.WebkitTransform = "rotate(45deg)";
                    left_circle.style.WebkitTransform = "rotate(45deg)";
-                   cur_color = circle_color[interval_index];
+                   
                    right_circle.style.borderTopColor = cur_color;
                    right_circle.style.borderRightColor = cur_color;
                    left_circle.style.borderLeftColor = cur_color;
@@ -172,6 +204,9 @@
                     return;
                 }
                 var total = circle_total_time[interval_index];
+                if (is_long_rest) {
+                    total = circle_long_total_time;
+                }
                 ratio = (total - x) / total;
                 if (ratio <= 0.5) {
                     left_circle.style.WebkitTransform = "rotate(45deg)";
@@ -188,7 +223,7 @@
             circle_t = setTimeout(circle_process, circle_sleep_time)
            
            
-           //document.write(i)
+         
            t = setTimeout(show, sleep_time);
            
        }
@@ -200,39 +235,10 @@
            clearTimeout(circle_t);
            interval_index = (interval_index + 1) % 2;
            tomato_time();
-           //alert('test');
+        
        }
        btn_next.onclick = next;
        
-       /*
-       var right_circle = document.getElementsByClassName('rightcircle')[0];
-       var left_circle = document.getElementsByClassName('leftcircle')[0];
-       right_circle.style.WebkitTransform = "rotate(45deg)";
-       left_circle.style.WebkitTransform = "rotate(45deg)";
-       
-       var total = 5 * 1000 * 60;
-       var x = total;
-       var inter = 1000;
-       function test_process() {
-           x -= inter;
-           if (x <= 0) {
-               x = total;
-           }
-           ratio = (total - x) / total;
-           if (ratio <= 0.5) {
-               left_circle.style.WebkitTransform = "rotate(45deg)";
-               jiaodu = 45 + 360 * ratio;
-               right_circle.style.WebkitTransform = "rotate("+jiaodu+"deg)";
-           }
-           else {
-               right_circle.style.WebkitTransform = "rotate(225deg)";
-               jiaodu = 45 + 360 * (ratio - 0.5);
-               left_circle.style.WebkitTransform = "rotate("+Math.floor(jiaodu)+"deg)";
-           }
-           setTimeout(test_process, inter);
-       }
-       setTimeout(test_process, inter)
-       */
     </script>
 </body>
 </html>
