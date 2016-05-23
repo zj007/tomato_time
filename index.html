@@ -108,11 +108,13 @@
        var t = null;
        var circle_t = null;
        var interval_index = 0;
+       var continue_tomato_combine = 0;
+       var is_long_rest = false;
        function tomato_time() {
            //alert('hi');
-           var sleep_time = 60 * 1000; //1 minute
+           var sleep_time = 1000; //1 minute
            var circle_sleep_time = 1000; // 1 second
-           var minute_unit = 60 * 1000;
+           var minute_unit = 1000;
            
            //interval
            var work_interval = 25;
@@ -120,11 +122,15 @@
            var long_rest_interval = 30;
            var circle_long_total_time = long_rest_interval * minute_unit;
            
-           var continue_tomato_combine = 0;
            var interval_list = [work_interval, rest_interval];
            var circle_total_time = [work_interval * minute_unit, rest_interval  * minute_unit];
            var circle_color = ['#1e90ff', '#00bb55'];
            var remind_list = []
+           
+           if (is_long_rest) {
+               interval_list[1] = long_rest_interval;
+               circle_total_time[1] = long_rest_interval * minute_unit;
+           }
            
            var i = interval_list[interval_index];
            var x = circle_total_time[interval_index];
@@ -147,43 +153,43 @@
            left_circle.style.borderLeftColor = cur_color;
            left_circle.style.borderBottomColor = cur_color;
            
-           var is_long_rest = false;
-           
            function show() {
                i -= 1;
                if (i <= 0) {
                    clearTimeout(circle_t);
                    
-                   
-                   //complete half tomato time
                    if (!is_long_rest) {
                        continue_tomato_combine += 0.5;
                    }
-                   
+                   else {
+                       is_long_rest = false;
+                       
+                   }
+             
                    //if long rest
                    //is_long_rest = false;
-                   if (continue_tomato_combine >= 4) {
+                   if (continue_tomato_combine >= 3.5) {
                        continue_tomato_combine = 0;
                        is_long_rest = true;
                    }
-                   else {
-                       is_long_rest = false;
-                   }
                    
                    if (is_long_rest) {
-                       i = long_rest_interval;
-                       x = circle_long_total_time;
-                       cur_color = circle_color[1];
-                       remind_list[1].play();
+                          interval_list[1] = long_rest_interval;
+                          circle_total_time[1] = long_rest_interval * minute_unit;
                    }
-                   else{
-                       interval_index = (interval_index + 1) % 2;
-                       i = interval_list[interval_index];
-                       //music
-                       remind_list[interval_index].play();   
-                       x = circle_total_time[interval_index];
-                       cur_color = circle_color[interval_index];
+                   else {
+                          interval_list[1] = rest_interval;
+                          circle_total_time[1] = rest_interval * minute_unit;
                    }
+                   
+              
+                   interval_index = (interval_index + 1) % 2;
+                   i = interval_list[interval_index];
+                   //music
+                   remind_list[interval_index].play();   
+                   x = circle_total_time[interval_index];
+                   cur_color = circle_color[interval_index];
+                  
                    
                    right_circle.style.WebkitTransform = "rotate(45deg)";
                    left_circle.style.WebkitTransform = "rotate(45deg)";
@@ -204,9 +210,7 @@
                     return;
                 }
                 var total = circle_total_time[interval_index];
-                if (is_long_rest) {
-                    total = circle_long_total_time;
-                }
+              
                 ratio = (total - x) / total;
                 if (ratio <= 0.5) {
                     left_circle.style.WebkitTransform = "rotate(45deg)";
@@ -234,6 +238,16 @@
            clearTimeout(t);
            clearTimeout(circle_t);
            interval_index = (interval_index + 1) % 2;
+           if (!is_long_rest) {
+               continue_tomato_combine += 0.5;
+           }
+           else {
+               is_long_rest = false;
+           }
+           if (continue_tomato_combine >= 3.5) {
+               is_long_rest = true;
+               continue_tomato_combine = 0;
+           }
            tomato_time();
         
        }
