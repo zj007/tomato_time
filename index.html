@@ -78,10 +78,14 @@
             font-size: 400%;
         }
         .div-center {
-           width: 50px;
+           width: 100px;
            margin-top: 20px;
            margin-left: auto;
            margin-right: auto;
+           text-align: center;
+        }
+        #btn_next:hover {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -100,8 +104,8 @@
         </div>
     </div>
    
-   <div class="div-center">
-    <button id='btn_next'>next</button>
+   <div class="div-center" id="btn_next">
+        下一个任务
    </div>
        
     <script>
@@ -112,9 +116,9 @@
        var is_long_rest = false;
        function tomato_time() {
            //alert('hi');
-           var sleep_time = 1000; //1 minute
+           var sleep_time = 60 * 1000; //1 minute
            var circle_sleep_time = 1000; // 1 second
-           var minute_unit = 1000;
+           var minute_unit = 60 * 1000;
            
            //interval
            var work_interval = 25;
